@@ -1,11 +1,11 @@
 Package: PartialNetwork
 Encoding: UTF-8
-Version: 1.0.2
+Version: 1.0.3
 Type: Package
 Title: Estimating Peer Effects Using Partial Network Data
-Date: 2023-09-01
-Authors@R: c(person("Vincent", "Boucher",  role = c("aut"), email =  "vincent.boucher@ecn.ulaval.ca"), person("Elysee Aristide", "Houndetoungan",  role = c("cre","aut"), email =  "ariel92and@gmail.com"))
-Description: Implements IV-estimator and Bayesian estimator for linear-in-means Spatial Autoregressive (SAR) model (see LeSage, 1997 <https://journals.sagepub.com/doi/10.1177/016001769702000107>; Lee, 2004 <https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1468-0262.2004.00558.x>; Bramoullé et al., 2009 <doi:10.1016/j.jeconom.2008.12.021>), while assuming that only a partial information about the network structure is available. Examples are when the adjacency matrix is not fully observed or when only consistent estimation of the network formation model is available (see Boucher and Houndetoungan <https://ahoundetoungan.com/files/Papers/PartialNetwork.pdf>).
+Date: 2024-03-15
+Authors@R: c(person("Vincent", "Boucher",  role = c("aut"), email =  "vincent.boucher@ecn.ulaval.ca"), person("Aristide", "Houndetoungan",  role = c("cre","aut"), email =  "ariel92and@gmail.com"))
+Description: Implements IV-estimator and Bayesian estimator for linear-in-means Spatial Autoregressive (SAR) model (see LeSage, 1997 <doi:10.1177/016001769702000107>; Lee, 2004 <doi:10.1111/j.1468-0262.2004.00558.x>; Bramoullé et al., 2009 <doi:10.1016/j.jeconom.2008.12.021>), while assuming that only a partial information about the network structure is available. Examples are when the adjacency matrix is not fully observed or when only consistent estimation of the network formation model is available (see Boucher and Houndetoungan <https://ahoundetoungan.com/files/Papers/PartialNetwork.pdf>).
 License: GPL-3
 BugReports: https://github.com/ahoundetoungan/PartialNetwork/issues
 URL: https://github.com/ahoundetoungan/PartialNetwork
@@ -18,9 +18,9 @@ RoxygenNote: 7.2.3
 Suggests: AER, knitr, rmarkdown, CDatanet, ggplot2, MASS
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2023-08-22 07:59:16 UTC; haache
+Packaged: 2024-03-06 17:26:49 UTC; haache
 Author: Vincent Boucher [aut],
-  Elysee Aristide Houndetoungan [cre, aut]
-Maintainer: Elysee Aristide Houndetoungan <ariel92and@gmail.com>
+  Aristide Houndetoungan [cre, aut]
+Maintainer: Aristide Houndetoungan <ariel92and@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-08-22 18:20:05 UTC
+Date/Publication: 2024-03-06 23:40:17 UTC

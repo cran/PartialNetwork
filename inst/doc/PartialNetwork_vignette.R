@@ -1098,7 +1098,7 @@ summary(out.lspa2)
 #  # data set
 #  dataset       <- as.data.frame(cbind(y, X1 = X[,1], X2 = X[,2]))
 
-## ---- selb3a, eval=FALSE, echo=TRUE-------------------------------------------
+## ----selb3a, eval=FALSE, echo=TRUE--------------------------------------------
 #  mlinks        <- list(model = "logit", mlinks.formula = ~ dX1 + dX2,
 #                        mlinks.data = as.data.frame(Xnet))
 #  out.selb1     <- mcmcSAR(formula = y ~ X1 + X2, contextual = TRUE, G0 = Gobs,
@@ -1106,10 +1106,10 @@ summary(out.lspa2)
 #                           iteration = 2e4)
 #  summary(out.selb1)
 
-## ---- selb3b, echo=FALSE------------------------------------------------------
+## ----selb3b, echo=FALSE-------------------------------------------------------
 print(sout.selb1)
 
-## ---- selb3c, eval=FALSE, echo=TRUE-------------------------------------------
+## ----selb3c, eval=FALSE, echo=TRUE--------------------------------------------
 #  G0.obsvec     <- as.logical(mat.to.vec(G0.obs))
 #  Gvec          <- mat.to.vec(Gobs, ceiled = TRUE)[G0.obsvec]
 #  W             <- unlist(data.frame(nfriends = nfriends, nmislink = nmislink) %>%
@@ -1126,6 +1126,6 @@ print(sout.selb1)
 #                           iteration = 2e4)
 #  summary(out.selb2)
 
-## ---- selb3d, echo=FALSE------------------------------------------------------
+## ----selb3d, echo=FALSE-------------------------------------------------------
 print(sout.selb2)
 
