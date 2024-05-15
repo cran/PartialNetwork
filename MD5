@@ -1,6 +1,6 @@
-adb54e4d62a0dd01e13dca7ec0b0defa *DESCRIPTION
+cabd719391684ac494c716ab7a13f495 *DESCRIPTION
 49df97ae1aec6c238389da935e89c501 *NAMESPACE
-5ee386e99443dab3207277a6dab2b3b1 *NEWS.md
+8364c3d837de4078e5ab41bdf97e69ba *NEWS.md
 15f7c5a556eebcc076989da0f23c3cc2 *R/PartialNetwork.R
 23d5ee0685a31667a04f86bf34493d3f *R/RcppExports.R
 38d92852ed0196a331ffc3152be16081 *R/convertMV.R
@@ -19,15 +19,15 @@ e150127cc735cfaedc9320b22fe1093b *R/smm_fop.R
 e435be0d00af4320e3a7920ab6d104ce *R/summaryMCMCSAR.R
 cc069042c5c4090b3271e45d5f7b0aa6 *R/vMF.R
 fcca6cec0b9cd5ab1b2ba521804a9cf8 *README.md
-20c8d3f97d93e2e318a22508275b5a02 *build/partial.rdb
-8cb1dacbea1f5f904b9def2e40ddcc9c *build/vignette.rds
-009bdb9da17d7c557ad3e0db465461e8 *inst/doc/PartialNetwork_vignette.R
-9ff3fe639e60c0332d452d829a550314 *inst/doc/PartialNetwork_vignette.Rmd
-58b8569ca3caab696db1af8ae2dacb35 *inst/doc/PartialNetwork_vignette.pdf
+f61db891eb928123aba4412ca322f508 *build/partial.rdb
+68660c415982f7967f20753d33de857a *build/vignette.rds
+17bd41a01a90a900f260df14ff602ccf *inst/doc/PartialNetwork_vignette.R
+c76cfba10e64572000b33bf227776e6e *inst/doc/PartialNetwork_vignette.Rmd
+6dc29aded70e2587ab7f34658bbe318f *inst/doc/PartialNetwork_vignette.pdf
 b6a0b674c2ef76a279175bea5898d6be *inst/include/tools.h
 94c5155beb6382b35fbfe8649064e5c6 *inst/include/update.h
 99e5ca281644e2285691fa31e4d5d778 *inst/include/vMF.h
-cf4d82b180633010ab3966fa15c7ce25 *man/PartialNetwork-package.Rd
+764400f1aecca79f1a975688319cea26 *man/PartialNetwork-package.Rd
 f2896ac9c9672140b9de336327025fea *man/dvMF.Rd
 a715b341b5b909591b42937779366a47 *man/fit.dnetwork.Rd
 dbbe093055ec16e6eb4dee6faad108cd *man/logCpvMF.Rd
@@ -62,5 +62,5 @@ e6781515d0e7b63ca3390ed8014f6837 *src/smm.cpp
 798e452473bed7d02f4ad57ad3059285 *src/updateparms.cpp
 b1c2162fa3e7c731cbbbf98d266f1cc0 *src/vMF.cpp
 529786b362f066da20d1d8b8713a54d9 *vignettes/Packages.bib
-9ff3fe639e60c0332d452d829a550314 *vignettes/PartialNetwork_vignette.Rmd
+c76cfba10e64572000b33bf227776e6e *vignettes/PartialNetwork_vignette.Rmd
 3804b8867c6b0daefcd5f043653a21c9 *vignettes/References.bib

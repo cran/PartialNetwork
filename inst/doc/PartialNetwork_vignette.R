@@ -25,8 +25,7 @@ G0            <- sim.network(distr)
 # normalise 
 G0norm        <- norm.network(G0)
 # simulate dependent variable use an external package
-y             <- CDatanet::simsar(~ X, contextual = FALSE, Glist = G0norm, 
-                                  theta = c(alpha, beta, se))
+y             <- CDatanet::simsar(~ X, Glist = G0norm, theta = c(alpha, beta, se))
 y             <- y$y
 # generate instruments 
 instr         <- sim.IV(distr, X, y, replication = 1, power = 1)
@@ -62,6 +61,7 @@ maxbias <- apply(sapply(1:1000, function(...){
 {cat("Maximal absolute bias\n"); print(maxbias)}
 
 ## ----IV4, echo = TRUE, eval = TRUE--------------------------------------------
+rm(list = ls())
 library(PartialNetwork)
 set.seed(123)
 # Number of groups
@@ -85,12 +85,12 @@ X             <- cbind(rnorm(sum(N),0,5),rpois(sum(N),7))
 G0            <- sim.network(distr)
 # normalise 
 G0norm        <- norm.network(G0)
-# simulate dependent variable use an external package
-y             <- CDatanet::simsar(~ X, contextual = TRUE, Glist = G0norm, 
-                                  theta = c(alpha, beta, gamma, se))
-y             <- y$y
 # GX
 GX            <- peer.avg(G0norm, X)
+# simulate dependent variable use an external package
+y             <- CDatanet::simsar(~ X + GX, Glist = G0norm, 
+                                  theta = c(alpha, beta, gamma, se))
+y             <- y$y
 # generate instruments 
 # we need power = 2 for models with contextual effetcs
 instr         <- sim.IV(distr, X, y, replication = 1, power = 2)
@@ -127,6 +127,7 @@ maxbias <- apply(sapply(1:1000, function(...){
 {cat("Maximal absolute bias\n"); print(maxbias)}
 
 ## ----smm1, echo = TRUE, eval = TRUE-------------------------------------------
+rm(list = ls())
 library(PartialNetwork)
 set.seed(123)
 # Number of groups
@@ -151,8 +152,7 @@ G0norm        <- norm.network(G0)
 # Matrix GX
 GX            <- peer.avg(G0norm, X)
 # simulate dependent variable use an external package
-y             <- CDatanet::simsar(~ X, contextual = TRUE, Glist = G0norm, 
-                                  theta = c(alpha, beta, se))
+y             <- CDatanet::simsar(~ X + GX, Glist = G0norm, theta = c(alpha, beta, se))
 Gy            <- y$Gy
 y             <- y$y
 # build dataset
@@ -194,6 +194,9 @@ print(smm$smm3)
 ## ----Smm5a, echo = FALSE, eval = TRUE, message=FALSE--------------------------
 print(smm$smm4)
 
+## ----smm6a, echo = TRUE, eval = FALSE-----------------------------------------
+#  rm(list = ls())
+
 ## ----smm6b, echo = TRUE, eval = TRUE------------------------------------------
 library(PartialNetwork)
 set.seed(123)
@@ -229,7 +232,7 @@ G0norm        <- norm.network(G0)
 # Matrix GX
 GX            <- peer.avg(G0norm, X)
 # simulate dependent variable use an external package
-y             <- CDatanet::simsar(~ -1 + eff + X | X, Glist = G0norm, 
+y             <- CDatanet::simsar(~ -1 + eff + X + GX, Glist = G0norm, 
                                   theta = c(alpha, beta, se))
 Gy            <- y$Gy
 y             <- y$y
@@ -292,7 +295,7 @@ print(smm$smme3)
 #    # Matrix GX
 #    GX            <- peer.avg(G0norm, X)
 #    # simulate dependent variable use an external package
-#    y             <- CDatanet::simsar(~ -1 + eff + X | X, Glist = G0norm,
+#    y             <- CDatanet::simsar(~ -1 + eff + X + GX, Glist = G0norm,
 #                                      theta = c(alpha, beta, se))
 #    Gy            <- y$Gy
 #    y             <- y$y
@@ -334,6 +337,7 @@ load(url('https://github.com/ahoundetoungan/PartialNetwork/blob/master/datavigne
 
 ## ----smmp1, echo = TRUE, eval = FALSE-----------------------------------------
 #  library(PartialNetwork)
+#  rm(list = ls())
 #  set.seed(123)
 #  # Number of groups
 #  M        <- 100
@@ -369,8 +373,7 @@ load(url('https://github.com/ahoundetoungan/PartialNetwork/blob/master/datavigne
 #  # Matrix GX
 #  GX       <- peer.avg(G0norm, X)
 #  # simulate dependent variable use an external package
-#  y        <- CDatanet::simsar(~ X, contextual = TRUE, Glist = G0norm,
-#                                    theta = c(alpha, beta, se))
+#  y        <- CDatanet::simsar(~ X + GX, Glist = G0norm, theta = c(alpha, beta, se))
 #  Gy       <- y$Gy
 #  y        <- y$y
 #  # build dataset
@@ -430,6 +433,7 @@ load(url('https://github.com/ahoundetoungan/PartialNetwork/blob/master/datavigne
 #save(out.none1, out.none2.1, out.none2.2, out.none3.1, out.none3.2, file = "~/Dropbox/Papers - In progress/Partial Network/Package/AH/PartialNetwork/datavignettes/out.none.rda")
 
 ## ----BayesNone1as, eval=FALSE-------------------------------------------------
+#  rm(list = ls())
 #  library(PartialNetwork)
 #  set.seed(123)
 #  # EXAMPLE I: WITHOUT NETWORK FORMATION MODEL
@@ -454,8 +458,10 @@ load(url('https://github.com/ahoundetoungan/PartialNetwork/blob/master/datavigne
 #  G0            <- sim.network(distr)
 #  # normalize
 #  G0norm        <- norm.network(G0)
+#  # GX
+#  GX            <- peer.avg(G0norm, X)
 #  # simulate dependent variable use an external package
-#  y             <- CDatanet::simsar(~ X, contextual = TRUE, Glist = G0norm,
+#  y             <- CDatanet::simsar(~ X + GX, Glist = G0norm,
 #                                    theta = c(alpha, beta, gamma, se))
 #  y             <- y$y
 #  # dataset
@@ -469,9 +475,6 @@ load(url('https://github.com/ahoundetoungan/PartialNetwork/blob/master/datavigne
 
 ## ----BayesNone1b, echo=FALSE--------------------------------------------------
 summary(out.none1)
-
-## ----BayesNone1c, fig.height = 3, fig.align = "center"------------------------
-plot(out.none1, plot.type = "sim", mar = c(3, 2.1, 1, 1))
 
 ## ----BayesNone21s, eval=FALSE-------------------------------------------------
 #  # Example I-2: When a part of the network is observed
@@ -489,9 +492,6 @@ plot(out.none1, plot.type = "sim", mar = c(3, 2.1, 1, 1))
 ## ----BayesNone21b, echo=FALSE-------------------------------------------------
 summary(out.none2.1) # the peer effets seem overestimated
 
-## ----BayesNone21c, fig.height = 3, fig.align = "center"-----------------------
-plot(out.none2.1, plot.type = "sim", mar = c(3, 2.1, 1, 1))
-
 ## ----BayesNone22a, eval=FALSE-------------------------------------------------
 #  out.none2.2  <- mcmcSAR(formula = y ~ X1 + X2, contextual = TRUE, G0.obs = G0.obs,
 #                          G0 = G0.start, data = dataset,
@@ -500,9 +500,6 @@ plot(out.none2.1, plot.type = "sim", mar = c(3, 2.1, 1, 1))
 
 ## ----BayesNone22b, echo=FALSE-------------------------------------------------
 summary(out.none2.2)
-
-## ----BayesNone22c, fig.height = 3, fig.align = "center"-----------------------
-plot(out.none2.2, plot.type = "sim", mar = c(3, 2.1, 1, 1))
 
 ## ----BayesNone31as, eval=FALSE------------------------------------------------
 #  # Example I-3: When only the network distribution is available
@@ -515,9 +512,6 @@ plot(out.none2.2, plot.type = "sim", mar = c(3, 2.1, 1, 1))
 ## ----BayesNone31b, echo=FALSE-------------------------------------------------
 summary(out.none3.1)  # the peer effets seem overestimated
 
-## ----BayesNone31c, fig.height = 3, fig.align = "center"-----------------------
-plot(out.none3.1, plot.type = "sim", mar = c(3, 2.1, 1, 1))
-
 ## ----BayesNone32a, eval=FALSE-------------------------------------------------
 #  out.none3.2  <- mcmcSAR(formula = y ~ X1 + X2, contextual = TRUE, G0.obs = "none",
 #                          data = dataset, mlinks = list(dnetwork = distr), iteration = 2e4)
@@ -526,15 +520,13 @@ plot(out.none3.1, plot.type = "sim", mar = c(3, 2.1, 1, 1))
 ## ----BayesNone32b, echo=FALSE-------------------------------------------------
 summary(out.none3.2)  
 
-## ----BayesNone32c, fig.height = 3, fig.align = "center"-----------------------
-plot(out.none3.2, plot.type = "sim", mar = c(3, 2.1, 1, 1))
-
 ## ----BayesLog0, echo=FALSE----------------------------------------------------
 load(url('https://github.com/ahoundetoungan/PartialNetwork/blob/master/datavignettes/out.logi.rda?raw=true'))
 # save(out.logi2.2, out.logi3.2, slogestim, sout.logi4.1, sout.logi4.2, sout.logi4.3, sout.selb1, sout.selb2, file = "~/Dropbox/Papers - In progress/Partial Network/Package/AH/PartialNetwork/datavignettes/out.logi.rda")
 
 ## ----BayesLog1as, eval=FALSE--------------------------------------------------
 #  # EXAMPLE II: NETWORK FORMATION MODEL: LOGIT
+#  rm(list = ls())
 #  library(PartialNetwork)
 #  set.seed(123)
 #  # Number of groups
@@ -570,8 +562,10 @@ load(url('https://github.com/ahoundetoungan/PartialNetwork/blob/master/datavigne
 #  ynet          <- 1*((ynet + rlogis(length(ynet))) > 0)
 #  G0            <- vec.to.mat(ynet, N, normalise = FALSE)
 #  G0norm        <- norm.network(G0)
+#  # GX
+#  GX            <- peer.avg(G0norm, X)
 #  # simulate dependent variable use an external package
-#  y             <- CDatanet::simsar(~ X, contextual = TRUE, Glist = G0norm,
+#  y             <- CDatanet::simsar(~ X + GX, Glist = G0norm,
 #                                       theta = c(alpha, beta, gamma, se))
 #  y             <- y$y
 #  # dataset
@@ -596,6 +590,12 @@ load(url('https://github.com/ahoundetoungan/PartialNetwork/blob/master/datavigne
 ## ----BayesLog22b, echo=FALSE--------------------------------------------------
 summary(out.logi2.2) 
 
+## ----BayesLog22c, fig.height = 3, fig.align = "center"------------------------
+plot(out.logi2.2, plot.type = "sim", mar = c(3, 2.1, 1, 1))
+
+## ----BayesLog22cc, fig.height = 3, fig.align = "center"-----------------------
+plot(out.logi2.2, plot.type = "sim", which.parms = "rho", mar = c(3, 2.1, 1, 1))
+
 ## ----BayesLog31as, eval=FALSE-------------------------------------------------
 #  # Example II-2: When only the network distribution is available
 #  # Infer the network data
@@ -614,6 +614,12 @@ summary(out.logi2.2)
 
 ## ----BayesLog32b, echo=FALSE--------------------------------------------------
 summary(out.logi3.2) 
+
+## ----BayesLog32c, fig.height = 3, fig.align = "center"------------------------
+plot(out.logi3.2, plot.type = "sim", mar = c(3, 2.1, 1, 1))
+
+## ----BayesLog32cc, fig.height = 3, fig.align = "center"-----------------------
+plot(out.logi3.2, plot.type = "sim", which.parms = "rho", mar = c(3, 2.1, 1, 1))
 
 ## ----BayesLog21ae3, eval=FALSE------------------------------------------------
 #  estimates    <- list("rho"     = logestim$coefficients,
@@ -652,6 +658,7 @@ load(url('https://github.com/ahoundetoungan/PartialNetwork/blob/master/datavigne
 # save(data.plot1, data.plot2, genz, genv, zi, vk, file = "~/Dropbox/Papers - In progress/Partial Network/Package/AH/PartialNetwork/datavignettes/out.ard.rda")
 
 ## ----ard1, eval=FALSE---------------------------------------------------------
+#  rm(list = ls())
 #  library(PartialNetwork)
 #  set.seed(123)
 #  # LATENT SPACE MODEL
@@ -718,41 +725,39 @@ load(url('https://github.com/ahoundetoungan/PartialNetwork/blob/master/datavigne
 
 ## ----ardaa1, eval=FALSE-------------------------------------------------------
 #  # plot coordinates of individual 123
-#  i      <- 123
-#  zi     <- estim.ard1$simulations$z[i,,]
+#  i     <- 123
+#  zi    <- estim.ard1$simulations$z[i,,]
+#  par(mfrow = c(3, 1), mar = c(2.1, 2.1, 1, 1))
 #  invisible(lapply(1:3, function(x) {
 #    plot(zi[x,], type = "l", ylab = "", col = "blue", ylim = c(-1, 1))
 #    abline(h = genz[i, x], col = "red")
 #  }))
 
 ## ----ardaa1a, echo=FALSE, fig.height = 4, fig.align = "center"----------------
-i      <- 123
-oldpar <- par(no.readonly = TRUE)   
+i     <- 123
 par(mfrow = c(3, 1), mar = c(2.1, 2.1, 1, 1))
 invisible(lapply(1:3, function(x) {
   plot(zi[x,], type = "l", ylab = "", col = "blue", ylim = c(-1, 1))
   abline(h = genz[i, x], col = "red")
 }))
-par(oldpar)
 
 ## ----ardaa2, eval=FALSE-------------------------------------------------------
 #  # plot coordinates of the trait 8
 #  k     <- 8
 #  vk    <- estim.ard1$simulations$v[k,,]
+#  par(mfrow = c(3, 1), mar = c(2.1, 2.1, 1, 1))
 #  invisible(lapply(1:3, function(x) {
 #    plot(vk[x,], type = "l", ylab = "", col = "blue", ylim = c(-1, 1))
 #    abline(h = genv[k, x], col = "red")
 #  }))
 
 ## ----ardaa2a, echo=FALSE, fig.height = 4, fig.align = "center"----------------
-k      <- 8
-oldpar <- par(no.readonly = TRUE)   
+k     <- 8
 par(mfrow = c(3, 1), mar = c(2.1, 2.1, 1, 1))
 invisible(lapply(1:3, function(x) {
   plot(vk[x,], type = "l", ylab = "", col = "blue", ylim = c(-1, 1))
   abline(h = genv[k, x], col = "red")
 }))
-par(oldpar)
 
 ## ----ardb, message=FALSE, eval=FALSE------------------------------------------
 #  # plot degree
@@ -809,6 +814,7 @@ load(url('https://github.com/ahoundetoungan/PartialNetwork/blob/master/datavigne
 #save(out.lspa1, out.lspa2, file = "~/Dropbox/Papers - In progress/Partial Network/Package/AH/PartialNetwork/datavignettes/out.lsp.rda")
 
 ## ----bayesard1, eval=FALSE----------------------------------------------------
+#  rm(list = ls())
 #  library(PartialNetwork)
 #  set.seed(123)
 #  M             <- 30
@@ -898,8 +904,10 @@ load(url('https://github.com/ahoundetoungan/PartialNetwork/blob/master/datavigne
 #  X             <- cbind(rnorm(sum(N),0,5),rpois(sum(N),7))
 #  # Normalise G0
 #  G0norm        <- norm.network(G0)
+#  # GX
+#  GX            <- peer.avg(G0norm, X)
 #  # simulate dependent variable use an external package
-#  y             <- CDatanet::simsar(~ X, contextual = TRUE, Glist = G0norm,
+#  y             <- CDatanet::simsar(~ X + GX, Glist = G0norm,
 #                                    theta = c(alpha, beta, gamma, se))
 #  y             <- y$y
 #  # dataset
@@ -914,7 +922,11 @@ load(url('https://github.com/ahoundetoungan/PartialNetwork/blob/master/datavigne
 ## ----Bayesard2b, echo=FALSE---------------------------------------------------
 summary(out.lspa1) 
 
+## ----Bayesard2c, fig.height = 3, fig.align = "center"-------------------------
+plot(out.lspa1, plot.type = "sim", mar = c(3, 2.1, 1, 1))
+
 ## ----bayesard3, eval=FALSE----------------------------------------------------
+#  rm(list = ls())
 #  library(PartialNetwork)
 #  set.seed(123)
 #  M             <- 30
@@ -1011,8 +1023,10 @@ summary(out.lspa1)
 #  X             <- cbind(rnorm(sum(N),0,5),rpois(sum(N),7))
 #  # Normalise G0
 #  G0norm        <- norm.network(G0)
+#  # GX
+#  GX            <- peer.avg(G0norm, X)
 #  # simulate dependent variable use an external package
-#  y             <- CDatanet::simsar(~ X, contextual = TRUE, Glist = G0norm,
+#  y             <- CDatanet::simsar(~ X + GX, Glist = G0norm,
 #                                    theta = c(alpha, beta, gamma, se))
 #  y             <- y$y
 #  # dataset
@@ -1028,7 +1042,11 @@ summary(out.lspa1)
 ## ----Bayesard4b, echo=FALSE---------------------------------------------------
 summary(out.lspa2)
 
+## ----Bayesard4c, fig.height = 3, fig.align = "center"-------------------------
+plot(out.lspa2, plot.type = "sim", mar = c(3, 2.1, 1, 1))
+
 ## ----selb1, echo = TRUE, eval=FALSE-------------------------------------------
+#  rm(list = ls())
 #  library(PartialNetwork)
 #  library(dplyr)
 #  set.seed(123)
@@ -1091,14 +1109,16 @@ summary(out.lspa2)
 #    G0.obs[[x]] <- G0.obsx
 #  }
 #  G0norm        <- norm.network(G0)
+#  # GX
+#  GX            <- peer.avg(G0norm, X)
 #  # simulate dependent variable use an external package
-#  y             <- CDatanet::simsar(~ X, contextual = TRUE, Glist = G0norm,
+#  y             <- CDatanet::simsar(~ X + GX, Glist = G0norm,
 #                                    theta = c(alpha, beta, gamma, se))
 #  y             <- y$y
 #  # data set
 #  dataset       <- as.data.frame(cbind(y, X1 = X[,1], X2 = X[,2]))
 
-## ----selb3a, eval=FALSE, echo=TRUE--------------------------------------------
+## ---- selb3a, eval=FALSE, echo=TRUE-------------------------------------------
 #  mlinks        <- list(model = "logit", mlinks.formula = ~ dX1 + dX2,
 #                        mlinks.data = as.data.frame(Xnet))
 #  out.selb1     <- mcmcSAR(formula = y ~ X1 + X2, contextual = TRUE, G0 = Gobs,
@@ -1106,10 +1126,10 @@ summary(out.lspa2)
 #                           iteration = 2e4)
 #  summary(out.selb1)
 
-## ----selb3b, echo=FALSE-------------------------------------------------------
+## ---- selb3b, echo=FALSE------------------------------------------------------
 print(sout.selb1)
 
-## ----selb3c, eval=FALSE, echo=TRUE--------------------------------------------
+## ---- selb3c, eval=FALSE, echo=TRUE-------------------------------------------
 #  G0.obsvec     <- as.logical(mat.to.vec(G0.obs))
 #  Gvec          <- mat.to.vec(Gobs, ceiled = TRUE)[G0.obsvec]
 #  W             <- unlist(data.frame(nfriends = nfriends, nmislink = nmislink) %>%
@@ -1126,6 +1146,6 @@ print(sout.selb1)
 #                           iteration = 2e4)
 #  summary(out.selb2)
 
-## ----selb3d, echo=FALSE-------------------------------------------------------
+## ---- selb3d, echo=FALSE------------------------------------------------------
 print(sout.selb2)
 
