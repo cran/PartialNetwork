@@ -67,11 +67,10 @@ The parameter \code{smm.ctr} is the list of some control parameters such as:
 }
 }
 \examples{
-\donttest{
 # Number of groups
-M        <- 100
+M        <- 10
 # size of each group
-N        <- rep(30,M)
+N        <- rep(20,M)
 # covariates
 X        <- cbind(rnorm(sum(N),0,5),rpois(sum(N),7))
 # network formation model parameter
@@ -101,8 +100,8 @@ G0       <- vec.to.mat(ynet, N, normalise = FALSE)
 G0norm   <- norm.network(G0)
 # Matrix GX
 GX       <- peer.avg(G0norm, X)
-# simulate dependent variable use an external package
-y        <- CDatanet::simsar(~ X, contextual = TRUE, Glist = G0norm,
+# simulate the dependent variable use an external package
+y        <- CDatanet::simsar(~ X + GX, Glist = G0norm,
                              theta = c(alpha, beta, se))
 Gy       <- y$Gy
 y        <- y$y
@@ -125,5 +124,4 @@ d.logit     <- lapply(1:M, function(x) {
 smm.logit   <- smmSAR(y ~ X1 + X2, dnetwork = d.logit, contextual = TRUE,
                       smm.ctr  = list(R = 100L, print = TRUE), data = dataset)
 summary(smm.logit, dnetwork = d.logit, data = dataset)
-}
 }

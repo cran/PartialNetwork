@@ -35,11 +35,10 @@
 #'     \item{smm.ctr}{input value of `smm.ctr`.}
 #'     \item{details}{other details of the model.}
 #' @examples 
-#' \donttest{
 #' # Number of groups
-#' M        <- 100
+#' M        <- 10
 #' # size of each group
-#' N        <- rep(30,M)
+#' N        <- rep(20,M)
 #' # covariates
 #' X        <- cbind(rnorm(sum(N),0,5),rpois(sum(N),7))
 #' # network formation model parameter
@@ -69,8 +68,8 @@
 #' G0norm   <- norm.network(G0)
 #' # Matrix GX
 #' GX       <- peer.avg(G0norm, X)
-#' # simulate dependent variable use an external package
-#' y        <- CDatanet::simsar(~ X, contextual = TRUE, Glist = G0norm,
+#' # simulate the dependent variable use an external package
+#' y        <- CDatanet::simsar(~ X + GX, Glist = G0norm,
 #'                              theta = c(alpha, beta, se))
 #' Gy       <- y$Gy
 #' y        <- y$y
@@ -93,7 +92,6 @@
 #' smm.logit   <- smmSAR(y ~ X1 + X2, dnetwork = d.logit, contextual = TRUE,
 #'                       smm.ctr  = list(R = 100L, print = TRUE), data = dataset)
 #' summary(smm.logit, dnetwork = d.logit, data = dataset)
-#' }
 #' @export
 smmSAR <- function(formula,
                    contextual    = FALSE,
@@ -173,7 +171,7 @@ smmSAR <- function(formula,
   
   # weight matrix
   if(inherits(W, "character")){
-    W          <- diag(Kx1 + iv.power*Kx2)
+    W          <- diag(ninstr)
   }
   
   # Other
@@ -222,34 +220,32 @@ smmSAR <- function(formula,
     if(fixed.effects){
       if(contextual){
         V      <- as.matrix(cbind(X1, GX2))
-        ctr.b  <- c(list(V = V, GX2 = GX2), ctr.b)
+        ctr.b  <- c(list(V = V), ctr.b)
         fopt   <- ifelse(wprint, optim1fepr, optim1fe)
-        ctr    <- c(list(f = fopt, V = V, GX2 = GX2), ctr)
+        ctr    <- c(list(f = fopt, V = V), ctr)
         fbeta  <- fbeta1fe
         fmvzH  <- fmvzetaH1fe
       } else {
-        ctr.b  <- c(list(GX2 = GX2), ctr.b)
         ctr.b  <- ctr.b[!(names(ctr.b) %in% c("Kx2"))]
         fopt   <- ifelse(wprint, optim1ncfepr, optim1ncfe)
         ctr    <- ctr[!(names(ctr) %in% c("Kx2"))]
-        ctr    <- c(list(f = fopt, GX2 = GX2), ctr)
+        ctr    <- c(list(f = fopt), ctr)
         fbeta  <- fbeta1ncfe
         fmvzH  <- fmvzetaH1ncfe
       }
     } else {
       if(contextual){
         V      <- as.matrix(cbind(X1, GX2))
-        ctr.b  <- c(list(V = V, GX2 = GX2), ctr.b)
+        ctr.b  <- c(list(V = V), ctr.b)
         fopt   <- ifelse(wprint, optim1pr, optim1)
-        ctr    <- c(list(f = fopt, V = V, GX2 = GX2), ctr)
+        ctr    <- c(list(f = fopt, V = V), ctr)
         fbeta  <- fbeta1
         fmvzH  <- fmvzetaH1
       } else {
-        ctr.b  <- c(list(GX2 = GX2), ctr.b)
         ctr.b  <- ctr.b[!(names(ctr.b) %in% c("Kx2"))]
         fopt   <- ifelse(wprint, optim1ncpr, optim1nc)
         ctr    <- ctr[!(names(ctr) %in% c("Kx2"))]
-        ctr    <- c(list(f = fopt, GX2 = GX2), ctr)
+        ctr    <- c(list(f = fopt), ctr)
         fbeta  <- fbeta1nc
         fmvzH  <- fmvzetaH1nc
       }
@@ -564,23 +560,23 @@ smmSAR <- function(formula,
         if(contextual){
           fmvzeta   <- fmvzeta1fe
           fmvzetaH  <- fmvzetaH1fe
-          Afmvzeta  <- c(Afmvzeta, list(S = nS, T = nT, Ilist = Ilist, X1 = X1, X2 = X2, GX2 = GX2, 
+          Afmvzeta  <- c(Afmvzeta, list(S = nS, T = nT, Ilist = Ilist, X1 = X1, X2 = X2, 
                                         V = as.matrix(cbind(X1, GX2)), Kx2 = Kx2))
         } else {
           fmvzeta   <- fmvzeta1ncfe
           fmvzetaH  <- fmvzetaH1ncfe
-          Afmvzeta  <- c(Afmvzeta, list(S = nS, T = nT, Ilist = Ilist, X1 = X1, X2 = X2, GX2 = GX2))
+          Afmvzeta  <- c(Afmvzeta, list(S = nS, T = nT, Ilist = Ilist, X1 = X1, X2 = X2))
         }
       } else {
         if(contextual){
           fmvzeta   <- fmvzeta1
           fmvzetaH  <- fmvzetaH1
-          Afmvzeta  <- c(Afmvzeta, list(S = nS, T = nT, Ilist = Ilist, X1 = X1, X2 = X2, GX2 = GX2,
+          Afmvzeta  <- c(Afmvzeta, list(S = nS, T = nT, Ilist = Ilist, X1 = X1, X2 = X2, 
                                         V = as.matrix(cbind(X1, GX2)), Kx2 = Kx2))
         } else {
           fmvzeta   <- fmvzeta1nc
           fmvzetaH  <- fmvzetaH1nc
-          Afmvzeta  <- c(Afmvzeta, list(S = nS, T = nT, Ilist = Ilist, X1 = X1, X2 = X2, GX2 = GX2))
+          Afmvzeta  <- c(Afmvzeta, list(S = nS, T = nT, Ilist = Ilist, X1 = X1, X2 = X2))
         }
       }
     }

@@ -53,7 +53,6 @@ the same draw should not be used to approximate the instruments. Thus, each comp
 This process can be replicated several times and the argument \code{replication} can be used to set the number of replications desired.
 }
 \examples{
-\donttest{
 library(AER)
 # Number of groups
 M             <- 30
@@ -75,8 +74,8 @@ G0            <- sim.network(prior)
 # normalise 
 G0norm        <- norm.network(G0)
 # simulate dependent variable use an external package
-y             <- CDatanet::simsar(~ X, contextual = FALSE, Glist = G0norm, 
-                                     theta = c(alpha, beta, se))
+y             <- CDatanet::simsar(~ X, Glist = G0norm,
+                                  theta = c(alpha, beta, se))
 y             <- y$y
 # generate instruments 
 instr         <- sim.IV(prior, X, y, replication = 1, power = 1)
@@ -96,7 +95,6 @@ summary(out.iv1)
 # Different draws
 out.iv2           <- ivreg(y ~ X1 + X2 + G1y | X1 + X2 + G2X1 + G2X2, data = dataset)
 summary(out.iv2)
-}
 }
 \seealso{
 \code{\link{mcmcSAR}}
