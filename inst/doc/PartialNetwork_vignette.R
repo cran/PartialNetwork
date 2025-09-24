@@ -10,7 +10,7 @@ M             <- 30
 # size of each group
 N             <- rep(50,M)
 # individual effects
-beta          <- c(2,1,1.5) 
+beta          <- c(2,1,1.5)
 # endogenous effects
 alpha         <- 0.4
 # std-dev errors
@@ -22,20 +22,20 @@ distr         <- vec.to.mat(distr, N, normalise = FALSE)
 X             <- cbind(rnorm(sum(N),0,5),rpois(sum(N),7))
 # true network
 G0            <- sim.network(distr)
-# normalise 
+# normalise
 G0norm        <- norm.network(G0)
 # simulate dependent variable use an external package
 y             <- CDatanet::simsar(~ X, Glist = G0norm, theta = c(alpha, beta, se))
 y             <- y$y
-# generate instruments 
+# generate instruments
 instr         <- sim.IV(distr, X, y, replication = 1, power = 1)
 GY1c1         <- instr[[1]]$G1y       # proxy for Gy (draw 1)
 GXc1          <- instr[[1]]$G1X[,,1]  # proxy for GX (draw 1)
 GXc2          <- instr[[1]]$G2X[,,1]  # proxy for GX (draw 2)
 # build dataset
 # keep only instrument constructed using a different draw than the one used to proxy Gy
-dataset           <- as.data.frame(cbind(y, X, GY1c1, GXc1, GXc2)) 
-colnames(dataset) <- c("y","X1","X2","G1y", "G1X1", "G1X2", "G2X1", "G2X2") 
+dataset           <- as.data.frame(cbind(y, X, GY1c1, GXc1, GXc2))
+colnames(dataset) <- c("y","X1","X2","G1y", "G1X1", "G1X2", "G2X1", "G2X2")
 
 ## ----IV2, echo = TRUE, eval = TRUE, message=FALSE-----------------------------
 library(AER)
@@ -49,8 +49,8 @@ out.iv2           <- ivreg(y ~ X1 + X2 + G1y | X1 + X2 + G2X1 + G2X2, data = dat
 summary(out.iv2)
 
 ## ----IV3bias------------------------------------------------------------------
-ddS     <- as.matrix(cbind(1, dataset[,c("X1", "X2", "G1y")]))         #\ddot{S} 
-dZ      <- as.matrix(cbind(1, dataset[,c("X1", "X2", "G2X1", "G2X2")]))#\dot{Z} 
+ddS     <- as.matrix(cbind(1, dataset[,c("X1", "X2", "G1y")]))         #\ddot{S}
+dZ      <- as.matrix(cbind(1, dataset[,c("X1", "X2", "G2X1", "G2X2")]))#\dot{Z}
 dZddS   <- crossprod(dZ, ddS)/sum(N)                                  
 W       <- solve(crossprod(dZ)/sum(N))                                 
 matM    <- solve(crossprod(dZddS, W%*%dZddS), crossprod(dZddS, W))    
@@ -69,7 +69,7 @@ M             <- 30
 # size of each group
 N             <- rep(50,M)
 # individual effects
-beta          <- c(2,1,1.5) 
+beta          <- c(2,1,1.5)
 # contextual effects
 gamma         <- c(5, -3)
 # endogenous effects
@@ -83,15 +83,15 @@ distr         <- vec.to.mat(distr, N, normalise = FALSE)
 X             <- cbind(rnorm(sum(N),0,5),rpois(sum(N),7))
 # true network
 G0            <- sim.network(distr)
-# normalise 
+# normalise
 G0norm        <- norm.network(G0)
 # GX
 GX            <- peer.avg(G0norm, X)
 # simulate dependent variable use an external package
-y             <- CDatanet::simsar(~ X + GX, Glist = G0norm, 
+y             <- CDatanet::simsar(~ X + GX, Glist = G0norm,
                                   theta = c(alpha, beta, gamma, se))
 y             <- y$y
-# generate instruments 
+# generate instruments
 # we need power = 2 for models with contextual effetcs
 instr         <- sim.IV(distr, X, y, replication = 1, power = 2)
 GY1c1         <- instr[[1]]$G1y       # proxy for Gy (draw 1)
@@ -100,21 +100,21 @@ GXc2          <- instr[[1]]$G2X[,,1]  # proxy for GX (draw 2)
 GXc2sq        <- instr[[1]]$G2X[,,2]  # proxy for G^2X (draw 2)
 # build dataset
 # keep only instrument constructed using a different draw than the one used to proxy Gy
-dataset           <- as.data.frame(cbind(y, X, GX, GY1c1, GXc1, GXc2, GXc2sq)) 
+dataset           <- as.data.frame(cbind(y, X, GX, GY1c1, GXc1, GXc2, GXc2sq))
 colnames(dataset) <- c("y","X1","X2", "GX1", "GX2", "G1y", "G1X1", "G1X2", "G2X1", "G2X2",
-                       "G2X1sq", "G2X2sq") 
+                       "G2X1sq", "G2X2sq")
 
 ## ----IV5, echo = TRUE, eval = TRUE, message=FALSE-----------------------------
 # Different draws
-out.iv2           <- ivreg(y ~ X1 + X2 + GX1 + GX2 + G1X1 + G1X2 + G1y | X1 + X2 + GX1 + 
-                             GX2 + G1X1 + G1X2 + G2X1 + G2X2 + G2X1sq + G2X2sq, 
+out.iv2           <- ivreg(y ~ X1 + X2 + GX1 + GX2 + G1X1 + G1X2 + G1y | X1 + X2 + GX1 +
+                             GX2 + G1X1 + G1X2 + G2X1 + G2X2 + G2X1sq + G2X2sq,
                            data = dataset)
 summary(out.iv2)
 
 ## ----IV5bias------------------------------------------------------------------
-ddS     <- as.matrix(cbind(1, dataset[,c("X1", "X2", "GX1", "GX2", "G1X1", "G1X2", 
+ddS     <- as.matrix(cbind(1, dataset[,c("X1", "X2", "GX1", "GX2", "G1X1", "G1X2",
                                          "G1y")]))                
-dZ      <- as.matrix(cbind(1, dataset[,c("X1", "X2", "GX1", "GX2", "G1X1", 
+dZ      <- as.matrix(cbind(1, dataset[,c("X1", "X2", "GX1", "GX2", "G1X1",
                                          "G1X2", "G2X1", "G2X2", "G2X1sq", "G2X2sq")]))
 dZddS   <- crossprod(dZ, ddS)/sum(N)                                  
 W       <- solve(crossprod(dZ)/sum(N))                                 
@@ -122,7 +122,7 @@ matM    <- solve(crossprod(dZddS, W%*%dZddS), crossprod(dZddS, W))
 maxbias <- apply(sapply(1:1000, function(...){
   dddGy <- peer.avg(sim.network(distr, normalise = TRUE) , y)
   abs(matM%*%crossprod(dZ, dddGy - dataset$G1y)/sum(N))
-}), 1, max); names(maxbias) <- c("(Intercept)", "X1", "X2", "GX1", "GX2", "G1X1", 
+}), 1, max); names(maxbias) <- c("(Intercept)", "X1", "X2", "GX1", "GX2", "G1X1",
                                  "G1X2", "G1y")
 {cat("Maximal absolute bias\n"); print(maxbias)}
 
@@ -135,11 +135,11 @@ M             <- 100
 # size of each group
 N             <- rep(30,M)
 # individual effects
-beta          <- c(2, 1, 1.5, 5, -3) 
+beta          <- c(2, 1, 1.5, 5, -3)
 # endogenous effects
 alpha         <- 0.4
 # std-dev errors
-se            <- 1 
+se            <- 1
 # network distribution
 distr         <- runif(sum(N*(N-1)))
 distr         <- vec.to.mat(distr, N, normalise = FALSE)
@@ -147,7 +147,7 @@ distr         <- vec.to.mat(distr, N, normalise = FALSE)
 X             <- cbind(rnorm(sum(N),0,5),rpois(sum(N),7))
 # true network
 G0            <- sim.network(distr)
-# normalise 
+# normalise
 G0norm        <- norm.network(G0)
 # Matrix GX
 GX            <- peer.avg(G0norm, X)
@@ -156,8 +156,8 @@ y             <- CDatanet::simsar(~ X + GX, Glist = G0norm, theta = c(alpha, bet
 Gy            <- y$Gy
 y             <- y$y
 # build dataset
-dataset           <- as.data.frame(cbind(y, X, Gy, GX)) 
-colnames(dataset) <- c("y","X1","X2", "Gy", "GX1", "GX2") 
+dataset           <- as.data.frame(cbind(y, X, Gy, GX))
+colnames(dataset) <- c("y","X1","X2", "Gy", "GX1", "GX2")
 
 ## ----Smmload, echo = FALSE, eval = TRUE, message=FALSE------------------------
 load(url('https://raw.githubusercontent.com/ahoundetoungan/PartialNetwork/master/datavignettes/smm.rda', "rb"))
@@ -218,27 +218,27 @@ X             <- cbind(rnorm(sum(N),0,5), rpois(sum(N),7))
 # Groups' fixed effects
 # In order to have groups' heterogeneity correlated to X (fixed effects),
 # We consider the quantile of X2 at 25% in the group
-eff           <- unlist(lapply(1:M, function(x) 
+eff           <- unlist(lapply(1:M, function(x)
   rep(quantile(X[(c(0, cumsum(N))[x]+1):(cumsum(N)[x]),2], probs = 0.25), each = N[x])))
-print(c("cor(eff, X1)" = cor(eff, X[,1]), "cor(eff, X2)" = cor(eff, X[,2]))) 
-# We can see that eff is correlated to X2. We can confirm that the correlation is 
+print(c("cor(eff, X1)" = cor(eff, X[,1]), "cor(eff, X2)" = cor(eff, X[,2])))
+# We can see that eff is correlated to X2. We can confirm that the correlation is
 # strongly significant.
 print(c("p.value.cor(eff, X1)" = cor.test(eff, X[,1])$p.value,
         "p.value.cor(eff, X2)" = cor.test(eff, X[,2])$p.value))
 # true network
 G0            <- sim.network(distr)
-# normalise 
+# normalise
 G0norm        <- norm.network(G0)
 # Matrix GX
 GX            <- peer.avg(G0norm, X)
 # simulate dependent variable use an external package
-y             <- CDatanet::simsar(~ -1 + eff + X + GX, Glist = G0norm, 
+y             <- CDatanet::simsar(~ -1 + eff + X + GX, Glist = G0norm,
                                   theta = c(alpha, beta, se))
 Gy            <- y$Gy
 y             <- y$y
 # build dataset
-dataset           <- as.data.frame(cbind(y, X, Gy, GX)) 
-colnames(dataset) <- c("y","X1","X2", "Gy", "GX1", "GX2") 
+dataset           <- as.data.frame(cbind(y, X, Gy, GX))
+colnames(dataset) <- c("y","X1","X2", "Gy", "GX1", "GX2")
 
 ## ----Smm7, echo = TRUE, eval = FALSE, message=FALSE---------------------------
 # out.smmeff1 <- smmSAR(y ~ X1 + X2 || GX1 + GX2, dnetwork = distr, contextual = T,
@@ -588,7 +588,7 @@ load(url('https://raw.githubusercontent.com/ahoundetoungan/PartialNetwork/master
 # summary(out.logi2.2)
 
 ## ----BayesLog22b, echo=FALSE--------------------------------------------------
-summary(out.logi2.2) 
+summary(out.logi2.2)
 
 ## ----BayesLog22c, fig.height = 3, fig.align = "center"------------------------
 plot(out.logi2.2, plot.type = "sim", mar = c(3, 2.1, 1, 1))
@@ -613,7 +613,7 @@ plot(out.logi2.2, plot.type = "sim", which.parms = "rho", mar = c(3, 2.1, 1, 1))
 # summary(out.logi3.2)
 
 ## ----BayesLog32b, echo=FALSE--------------------------------------------------
-summary(out.logi3.2) 
+summary(out.logi3.2)
 
 ## ----BayesLog32c, fig.height = 3, fig.align = "center"------------------------
 plot(out.logi3.2, plot.type = "sim", mar = c(3, 2.1, 1, 1))
@@ -769,7 +769,7 @@ invisible(lapply(1:3, function(x) {
 
 ## ----ardbb, message=FALSE, echo=FALSE, fig.height = 3, fig.align = "center"----
 library(ggplot2)
-ggplot(data = data.plot1, aes(x = True_degree, y = Estim_degree)) + 
+ggplot(data = data.plot1, aes(x = True_degree, y = Estim_degree)) +
    geom_abline(col = "red") + geom_point(col = "blue")
 
 ## ----ard2as, eval=FALSE-------------------------------------------------------
@@ -806,8 +806,8 @@ ggplot(data = data.plot1, aes(x = True_degree, y = Estim_degree)) +
 #   geom_abline(col = "red") + geom_point()
 
 ## ----ardee, message=FALSE, echo=FALSE, fig.height = 3, fig.align = "center"----
-ggplot(data = data.plot2, aes(x = True_degree, y = Estim_degree, colour = Has_ARD)) + 
-  geom_abline(col = "red") + geom_point() 
+ggplot(data = data.plot2, aes(x = True_degree, y = Estim_degree, colour = Has_ARD)) +
+  geom_abline(col = "red") + geom_point()
 
 ## ----Bayesard00, echo=FALSE---------------------------------------------------
 load(url('https://raw.githubusercontent.com/ahoundetoungan/PartialNetwork/master/datavignettes/out.lsp.rda', "rb"))
@@ -920,7 +920,7 @@ load(url('https://raw.githubusercontent.com/ahoundetoungan/PartialNetwork/master
 # summary(out.lspa1)
 
 ## ----Bayesard2b, echo=FALSE---------------------------------------------------
-summary(out.lspa1) 
+summary(out.lspa1)
 
 ## ----Bayesard2c, fig.height = 3, fig.align = "center"-------------------------
 plot(out.lspa1, plot.type = "sim", mar = c(3, 2.1, 1, 1))
